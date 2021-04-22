@@ -18,5 +18,16 @@ namespace AiAlgorithms.racing
             RaceController.Play(test, racer, true);
             Console.WriteLine(Path.Combine(TestContext.CurrentContext.TestDirectory, "racing", "visualizer", "index.html"));
         }
+
+        [Test]
+        [Explicit("Тест для отладки и анализа")]
+        public void TuneRace([Values(0)] int testIndex)
+        {
+            // Открой файл bin/Debug/*/racing/visualizer/index.html чтобы посмотреть реплей на тесте testIndex
+            var racer = new RandomRacer();
+            var test = RaceProblemsRepo.GetTests(true).ElementAt(testIndex);
+            RaceController.Play(test, racer, true);
+            Console.WriteLine(Path.Combine(TestContext.CurrentContext.TestDirectory, "racing", "visualizer", "index.html"));
+        }
     }
 }

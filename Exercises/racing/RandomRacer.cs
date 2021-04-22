@@ -7,14 +7,11 @@ namespace AiAlgorithms.racing
 {
     public class RandomRacer : ISolver<RaceState, RaceSolution>
     {
-        public IEnumerable<RaceSolution> GetSolutions(RaceState problem, Countdown countdown)
+        private V[] directions = new V[9];
+        private Random random = new Random();
+
+        public RandomRacer()
         {
-            var car = problem.Car;
-            var distanceToFlag = problem.GetFlagFor(car).DistTo(car.Pos);
-            var depth = Math.Min(10, (int)distanceToFlag / 4 + 5);
-
-            var directions = new V[9];
-
             var index = 0;
             for (var dx = -1; dx < 2; dx++)
             {
@@ -24,8 +21,13 @@ namespace AiAlgorithms.racing
                     index++;
                 }
             }
+        }
 
-            var random = new Random();
+        public IEnumerable<RaceSolution> GetSolutions(RaceState problem, Countdown countdown)
+        {
+            var car = problem.Car;
+            var distanceToFlag = problem.GetFlagFor(car).DistTo(car.Pos);
+            var depth = Math.Min(10, (int)distanceToFlag / 4 + 5);
 
             V[] bestPath = null;
             var value = double.NegativeInfinity;
