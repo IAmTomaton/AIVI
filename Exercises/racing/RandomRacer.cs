@@ -9,6 +9,9 @@ namespace AiAlgorithms.racing
     {
         private V[] directions = new V[9];
         private Random random = new Random();
+        private int maxDepth = 10;
+        private int depthDivider = 4;
+        private int minDepth = 5;
 
         public RandomRacer()
         {
@@ -23,11 +26,18 @@ namespace AiAlgorithms.racing
             }
         }
 
+        public RandomRacer(int maxDepth, int depthDivider, int minDepth) : this()
+        {
+            this.maxDepth = maxDepth;
+            this.depthDivider = depthDivider;
+            this.minDepth = minDepth;
+        }
+
         public IEnumerable<RaceSolution> GetSolutions(RaceState problem, Countdown countdown)
         {
             var car = problem.Car;
             var distanceToFlag = problem.GetFlagFor(car).DistTo(car.Pos);
-            var depth = Math.Min(10, (int)distanceToFlag / 4 + 5);
+            var depth = Math.Min(maxDepth, Math.Max((int)distanceToFlag / depthDivider, minDepth));
 
             V[] bestPath = null;
             var value = double.NegativeInfinity;
