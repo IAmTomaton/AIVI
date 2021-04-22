@@ -5,13 +5,13 @@ using AiAlgorithms.Algorithms;
 
 namespace AiAlgorithms.racing
 {
-    public class NaiveRacer : ISolver<RaceState, RaceSolution>
+    public class RandomRacer : ISolver<RaceState, RaceSolution>
     {
         public IEnumerable<RaceSolution> GetSolutions(RaceState problem, Countdown countdown)
         {
             var car = problem.Car;
             var distanceToFlag = problem.GetFlagFor(car).DistTo(car.Pos);
-            var depth = 5;
+            var depth = Math.Min(10, (int)distanceToFlag / 4 + 5);
 
             var directions = new V[9];
 
@@ -25,34 +25,22 @@ namespace AiAlgorithms.racing
                 }
             }
 
-            var pathCount = 100;
-            var paths = new List<V[]>();
             var random = new Random();
 
-            var bestPathIndex = 0;
+            V[] bestPath = null;
             var value = double.NegativeInfinity;
 
-            for (var i = 0; i < pathCount; i++)
+            while (!countdown.IsFinished())
             {
-                var path = new V[depth].Select(_ => directions[random.Next(0, directions.Length)]).ToArray();
-                paths.Add(path);
+                var path = Enumerable.Range(0, depth).Select(_ => directions[random.Next(0, directions.Length)]).ToArray();
                 var newValue = Simulation(problem.MakeCopy(), path);
                 if (value < newValue)
                 {
+                    yield return new RaceSolution(path);
                     value = newValue;
-                    bestPathIndex = i;
+                    bestPath = path;
                 }
             }
-
-            for (var i = 0; i < pathCount; i++)
-            {
-                if (bestPathIndex != i)
-                {
-                    yield return new RaceSolution(paths[i]);
-                }
-            }
-
-            yield return new RaceSolution(paths[bestPathIndex]);
         }
 
         private double Simulation(RaceState problem, V[] commands)

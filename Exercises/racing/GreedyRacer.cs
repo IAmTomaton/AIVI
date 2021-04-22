@@ -26,7 +26,7 @@ namespace AiAlgorithms.racing
             }
 
             V bestCommand = null;
-            var value = 0.0;
+            var value = double.NegativeInfinity;
 
             foreach (var dir in directions)
             {
@@ -45,14 +45,17 @@ namespace AiAlgorithms.racing
                     yield return new RaceSolution(Enumerable.Range(0, depth).Select(_ => dir).ToArray());
                 }
             }
-
-            yield return new RaceSolution(Enumerable.Range(0, depth).Select(_ => bestCommand).ToArray());
+            var Solution = new RaceSolution(Enumerable.Range(0, depth).Select(_ => bestCommand).ToArray());
+            Solution.Score = value;
+            yield return Solution;
         }
 
         private double Simulation(RaceState problem, V dir, int depth)
         {
             var flagCost = 1000;
             var distanceCost = 1;
+            var minDistanceCost = 2;
+            var minDistance = double.PositiveInfinity;
 
             for (var i = 0; i < depth; i++)
             {
@@ -62,9 +65,12 @@ namespace AiAlgorithms.racing
                     return double.NegativeInfinity;
                 if (problem.IsFinished)
                     break;
+                var distance = problem.Car.Pos.DistTo(problem.GetFlagFor(problem.Car));
+                if (minDistance > distance)
+                    minDistance = distance;
             }
             var car = problem.Car;
-            var value = car.FlagsTaken * flagCost - car.Pos.DistTo(problem.GetFlagFor(car)) * distanceCost;
+            var value = car.FlagsTaken * flagCost - minDistance * minDistanceCost - car.Pos.DistTo(problem.GetFlagFor(car)) * distanceCost;
 
             return value;
         }
