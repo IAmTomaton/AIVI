@@ -7,11 +7,24 @@ namespace AiAlgorithms.racing
 {
     public class GreedyRacer : ISolver<RaceState, RaceSolution>
     {
+        private int maxDepth = 10;
+        private int depthDivider = 4;
+        private int minDepth = 5;
+
+        public GreedyRacer() { }
+
+        public GreedyRacer(int maxDepth, int depthDivider, int minDepth) : this()
+        {
+            this.maxDepth = maxDepth;
+            this.depthDivider = depthDivider;
+            this.minDepth = minDepth;
+        }
+
         public IEnumerable<RaceSolution> GetSolutions(RaceState problem, Countdown countdown)
         {
             var car = problem.Car;
             var distanceToFlag = problem.GetFlagFor(car).DistTo(car.Pos);
-            var depth = Math.Min(10, (int)distanceToFlag / 3 + 1);
+            var depth = Math.Min(maxDepth, Math.Max((int)distanceToFlag / depthDivider, minDepth));
 
             var directions = new V[9];
 

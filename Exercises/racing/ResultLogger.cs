@@ -8,16 +8,23 @@ namespace AiAlgorithms.racing
 {
     class ResultLogger
     {
-        public static void LogResult(Dictionary<string, List<string>> results, string fileName)
+        public static void LogResult(ComparisonResult result, string fileName)
         {
             var output = new StringBuilder();
-            output.AppendLine(string.Join('\t', results.Keys));
+            output.AppendLine("Name\tAverage\tDeviation\tLowerBound\tUpperBound");
+            output.AppendLine("Best");
+            output.AppendLine($"{result.BestSolutionName}\t{result.BestSolutionStatistics.GetString()}");
 
-            var lines = results.Keys.Select(key => results[key].Count).Min();
-
-            for (var i = 0; i < lines; i++)
+            output.AppendLine("Adjacent");
+            foreach (var solution in result.Adjacent)
             {
-                output.AppendLine(string.Join('\t', results.Keys.Select(key => results[key][i])));
+                output.AppendLine($"{solution.Key}\t{solution.Value.GetString()}");
+            }
+
+            output.AppendLine("Other");
+            foreach (var solution in result.Other)
+            {
+                output.AppendLine($"{solution.Key}\t{solution.Value.GetString()}");
             }
 
             using (StreamWriter sw = new StreamWriter($"{fileName}", false, Encoding.Default))
