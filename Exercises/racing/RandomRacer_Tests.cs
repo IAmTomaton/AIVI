@@ -13,11 +13,15 @@ namespace AiAlgorithms.racing
         [Explicit("Тест для отладки и анализа")]
         public void VisualizeRace()
         {
-            // Открой файл bin/Debug/*/racing/visualizer/index.html чтобы посмотреть реплей на тесте testIndex
-            var racer = new GreedyRacer(9, 5, 5);
-            //var racer = new RandomRacer();
-            var test = RaceProblemsRepo.GetTests(true).ElementAt(2);
-            RaceController.Play(test, racer, true);
+            //var racer = new GreedyRacer(9, 5, 5);
+            var numberCycles = 50;
+            for (var i = 0; i < numberCycles; i++)
+            {
+                var racer = new RandomRacer(10, 4, 5);
+                var test = RaceProblemsRepo.GetTests(true).ElementAt(0);
+                if (!RaceController.Play(test, racer, true).Car.IsAlive)
+                    break;
+            }
             Console.WriteLine(Path.Combine(TestContext.CurrentContext.TestDirectory, "racing", "visualizer", "index.html"));
         }
 
@@ -27,8 +31,13 @@ namespace AiAlgorithms.racing
         {
             var tuner = new TunerDepthRandomRacer();
             var evaluationFunction = new EndRaceEvaluationFunction();
-            var result = tuner.Tune(evaluationFunction, 5);
-            ResultLogger.LogResult(result, "result_tune_random.txt");
+            var numberCycles = 10;
+            ComparisonResult initData = null;
+            for (var i = 0; i < numberCycles; i++)
+            {
+                initData = tuner.Tune(evaluationFunction, 5, initData);
+                ResultLogger.LogResult(initData, "result_tune_random.txt");
+            }
         }
 
         [Test]
@@ -37,7 +46,7 @@ namespace AiAlgorithms.racing
         {
             var tuner = new TunerDepthGreedyRacer();
             var evaluationFunction = new EndRaceEvaluationFunction();
-            var result = tuner.Tune(evaluationFunction, 10);
+            var result = tuner.Tune(evaluationFunction, 1);
             ResultLogger.LogResult(result, "result_tune_greedy.txt");
         }
 
@@ -77,17 +86,18 @@ namespace AiAlgorithms.racing
                         return state;
                     }
                 }
-            }, new List<(int, bool)> { (0, true), (1, true), (2, true) }, evaluationFunction, trialsCount);
+            }, new List<(int, bool)> { (0, true), (1, true), (2, true), (0, false), (1, false), (2, false) }, evaluationFunction, trialsCount);
 
             ResultLogger.LogResult(result, "result_compare.txt");
         }
 
         [Test]
-        [Explicit("Compare")]
+        [Explicit("CompareGready")]
         public void CompareGready()
         {
-            var trialsCount = 10;
+            var trialsCount = 1;
             var evaluationFunction = new EndRaceEvaluationFunction();
+            var initData = ResultLogger.ReadResult("result_compare_gready.txt");
 
             var result = Comparator.Compare(new Dictionary<string, Func<(int, bool), RaceState>>
             {
@@ -101,17 +111,19 @@ namespace AiAlgorithms.racing
                     }
                 },
                 {
-                    "Greedy1", i =>
+                    "Greedy2", i =>
                     {
-                        var racer = new GreedyRacer(15, 3, 7);
+                        var racer = new GreedyRacer(10, 5, 5);
                         var test = RaceProblemsRepo.GetTests(i.Item2).ElementAt(i.Item1);
                         var state = RaceController.Play(test, racer, false);
                         return state;
                     }
                 }
-            }, new List<(int, bool)> { (0, true), (1, true), (2, true) }, evaluationFunction, trialsCount);
+            },
+            new List<(int, bool)> { (0, true), (1, true), (2, true), (0, false), (1, false), (2, false) },
+            evaluationFunction, trialsCount, initData);
 
-            ResultLogger.LogResult(result, "result_compare.txt");
+            ResultLogger.LogResult(result, "result_compare_gready.txt");
         }
     }
 }

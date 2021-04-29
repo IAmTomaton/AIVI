@@ -9,15 +9,15 @@ namespace AiAlgorithms.racing
 {
     class TunerDepthGreedyRacer : ITuner<RaceState>
     {
-        public ComparisonResult Tune(IEvaluationFunction<RaceState> evaluationFunction, int trialsCount)
+        public ComparisonResult Tune(IEvaluationFunction<RaceState> evaluationFunction, int trialsCount, ComparisonResult initialData = null)
         {
             var solutions = new Dictionary<string, Func<(int, bool), RaceState>>();
 
-            for (var maxDepth = 5; maxDepth <= 15; maxDepth++)
+            for (var maxDepth = 8; maxDepth <= 12; maxDepth++)
             {
-                for (var depthDivider = 2; depthDivider <= 5; depthDivider++)
+                for (var depthDivider = 4; depthDivider <= 5; depthDivider++)
                 {
-                    for (var minDepth = 3; minDepth <= 10; minDepth++)
+                    for (var minDepth = 3; minDepth <= 7; minDepth++)
                     {
                         var tempMaxDepth = maxDepth;
                         var tempDepthDivider = depthDivider;

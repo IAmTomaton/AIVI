@@ -35,6 +35,9 @@ namespace AiAlgorithms.Algorithms
         public double Min { get; private set; } = double.PositiveInfinity;
         public double Max { get; private set; } = double.NegativeInfinity;
 
+        public double LowerBound => Mean - ConfIntervalSize;
+        public double UpperBound => Mean + ConfIntervalSize;
+
         public double StdDeviation => Math.Sqrt(Count * Sum2 - Sum * Sum) / Count;
 
         /// <summary>
@@ -82,18 +85,23 @@ namespace AiAlgorithms.Algorithms
         {
             if (humanReadable)
                 return $"{Mean.ToString(CultureInfo.InvariantCulture)} " +
-                       $"disp={StdDeviation.ToString(CultureInfo.InvariantCulture)} " +
+                       $"disp={FormatCompact(StdDeviation)} " +
                        $"min..max={Min.ToString(CultureInfo.InvariantCulture)}..{Max.ToString(CultureInfo.InvariantCulture)} " +
-                       $"confInt={ConfIntervalSize.ToString(CultureInfo.InvariantCulture)} " +
+                       $"confInt={FormatCompact(ConfIntervalSize)} " +
                        $"count={Count}";
             FormattableString line = $"{Mean}\t{StdDeviation}\t{ConfIntervalSize}\t{Count}";
             return line.ToString(CultureInfo.InvariantCulture);
         }
 
-
         public StatValue Clone()
         {
             return new StatValue(Count, Sum, Sum2, Min, Max);
+        }
+
+        public string Serialization()
+        {
+            return $"{Math.Round(Mean, 2)}\t{Math.Round(Mean - ConfIntervalSize, 2)}\t{Math.Round(Mean + ConfIntervalSize, 2)}\t{Math.Round(StdDeviation, 2)}" +
+                $"\t{Math.Round(ConfIntervalSize, 2)}\t{Count}\t{Math.Round(Min, 2)}\t{Math.Round(Max, 2)}\t{Sum}\t{Sum2}";
         }
     }
 }

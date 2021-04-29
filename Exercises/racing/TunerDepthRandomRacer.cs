@@ -9,15 +9,15 @@ namespace AiAlgorithms.racing
 {
     class TunerDepthRandomRacer : ITuner<RaceState>
     {
-        public ComparisonResult Tune(IEvaluationFunction<RaceState> evaluationFunction, int trialsCount)
+        public ComparisonResult Tune(IEvaluationFunction<RaceState> evaluationFunction, int trialsCount, ComparisonResult initialData = null)
         {
             var solutions = new Dictionary<string, Func<(int, bool), RaceState>>();
 
-            for (var maxDepth = 6; maxDepth <= 15; maxDepth++)
+            for (var maxDepth = 9; maxDepth <= 11; maxDepth++)
             {
-                for (var depthDivider = 3; depthDivider <= 5; depthDivider++)
+                for (var depthDivider = 4; depthDivider <= 4; depthDivider++)
                 {
-                    for (var minDepth = 5; minDepth <= 10; minDepth++)
+                    for (var minDepth = 5; minDepth <= 5; minDepth++)
                     {
                         var tempMaxDepth = maxDepth;
                         var tempDepthDivider = depthDivider;
@@ -33,7 +33,7 @@ namespace AiAlgorithms.racing
                 }
             }
 
-            var result = Comparator.Compare(solutions, new List<(int, bool)> { (0, true), (1, true), (2, true) }, evaluationFunction, trialsCount);
+            var result = Comparator.Compare(solutions, new List<(int, bool)> { (0, true) }, evaluationFunction, trialsCount, initialData);
 
             return result;
         }

@@ -6,6 +6,6 @@ namespace AiAlgorithms.racing
 {
     interface ITuner<TState>
     {
-        ComparisonResult Tune(IEvaluationFunction<TState> evaluationFunction, int trialsCount);
+        ComparisonResult Tune(IEvaluationFunction<TState> evaluationFunction, int trialsCount, ComparisonResult initialData = null);
     }
 }

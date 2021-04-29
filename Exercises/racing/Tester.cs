@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AiAlgorithms.Algorithms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,18 +9,18 @@ namespace AiAlgorithms.racing
 {
     class Tester
     {
-        public static SolutionStatistics Test<TSet, TState>(Func<TSet, TState> func, List<TSet> testSet,
+        public static StatValue Test<TSet, TState>(Func<TSet, TState> func, List<TSet> testSet,
             IEvaluationFunction<TState> evaluationFunction, int trialsCount)
         {
-            var tasks = testSet.SelectMany(test => Enumerable.Range(0, trialsCount).Select(_ => Task.Run(() => func(test))));
+            var task = Task.WhenAll(Enumerable.Range(0, trialsCount).Select(_ =>
+                Task.WhenAll(
+                    testSet.Select(
+                        test => Task.Run(() => evaluationFunction.Evaluate(func(test)))))
+                .ContinueWith(task => task.Result.Sum())
+            ));
 
-            var values = tasks.Select(task =>
-            {
-                task.Wait();
-                return evaluationFunction.Evaluate(task.Result);
-            }).ToList();
-
-            return new SolutionStatistics(values);
+            task.Wait();
+            return new StatValue(task.Result);
         }
     }
 }

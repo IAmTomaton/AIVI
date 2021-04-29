@@ -42,8 +42,7 @@ namespace AiAlgorithms.racing
             V[] bestPath = null;
             var value = double.NegativeInfinity;
 
-            //while (!countdown.IsFinished())
-            for (var i = 0; i < 1000; i++)
+            while (!countdown.IsFinished())
             {
                 var path = Enumerable.Range(0, depth).Select(_ => directions[random.Next(0, directions.Length)]).ToArray();
                 var newValue = Simulation(problem.MakeCopy(), path);
@@ -56,7 +55,7 @@ namespace AiAlgorithms.racing
             }
 
             if (bestPath is null)
-                yield return new RaceSolution(new V[] { new V(0, 0) });
+                yield return new RaceSolution(new V[] { new V(-Math.Sign(problem.Car.V.X), -Math.Sign(problem.Car.V.Y)) });
         }
 
         private double Simulation(RaceState problem, V[] commands)
