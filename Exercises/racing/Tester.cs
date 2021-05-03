@@ -12,15 +12,11 @@ namespace AiAlgorithms.racing
         public static StatValue Test<TSet, TState>(Func<TSet, TState> func, List<TSet> testSet,
             IEvaluationFunction<TState> evaluationFunction, int trialsCount)
         {
-            var task = Task.WhenAll(Enumerable.Range(0, trialsCount).Select(_ =>
-                Task.WhenAll(
-                    testSet.Select(
-                        test => Task.Run(() => evaluationFunction.Evaluate(func(test)))))
-                .ContinueWith(task => task.Result.Sum())
-            ));
-
-            task.Wait();
-            return new StatValue(task.Result);
+            var tasks = Enumerable.Range(0, trialsCount)
+                .Select(_ => Task.Run(() => testSet.Select(test => evaluationFunction.Evaluate(func(test))).Sum()))
+                .ToArray();
+            Task.WaitAll(tasks);
+            return new StatValue(tasks.Select(task => task.Result));
         }
     }
 }

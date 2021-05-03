@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace AiAlgorithms.racing
 {
-    class TunerDepthGreedyRacer : ITuner<RaceState>
+    class TunerDepthGreedyRacer : ITuner<(int, bool), RaceState>
     {
-        public ComparisonResult Tune(IEvaluationFunction<RaceState> evaluationFunction, int trialsCount, ComparisonResult initialData = null)
+        public ComparisonResult Tune(IEvaluationFunction<RaceState> evaluationFunction, List<(int, bool)> testSet, int trialsCount, ComparisonResult initialData = null)
         {
             var solutions = new Dictionary<string, Func<(int, bool), RaceState>>();
 
@@ -33,7 +33,7 @@ namespace AiAlgorithms.racing
                 }
             }
 
-            var result = Comparator.Compare(solutions, new List<(int, bool)> { (0, true), (1, true), (2, true) }, evaluationFunction, trialsCount);
+            var result = Comparator.Compare(solutions, testSet, evaluationFunction, trialsCount);
 
             return result;
         }

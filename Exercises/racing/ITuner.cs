@@ -4,8 +4,8 @@ using System.Text;
 
 namespace AiAlgorithms.racing
 {
-    interface ITuner<TState>
+    interface ITuner<TSet, TState>
     {
-        ComparisonResult Tune(IEvaluationFunction<TState> evaluationFunction, int trialsCount, ComparisonResult initialData = null);
+        ComparisonResult Tune(IEvaluationFunction<TState> evaluationFunction, List<TSet> testSet, int trialsCount, ComparisonResult initialData = null);
     }
 }

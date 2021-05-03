@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using System.Threading;
 
 namespace AiAlgorithms.racing
 {
     [TestFixture]
     public class RandomRacer_Tests
     {
+        public static List<(int, bool)> testSet = new List<(int, bool)> { (0, true), (1, true), (2, true), (0, false), (1, false), (2, false) };
+
         [Test]
         [Explicit("Тест для отладки и анализа")]
         public void VisualizeRace()
@@ -26,27 +30,27 @@ namespace AiAlgorithms.racing
         }
 
         [Test]
-        [Explicit("TuneRace")]
+        [Explicit("TuneRandomRace")]
         public void TuneRandomRace()
         {
             var tuner = new TunerDepthRandomRacer();
             var evaluationFunction = new EndRaceEvaluationFunction();
-            var numberCycles = 10;
+            var numberCycles = 100;
             ComparisonResult initData = null;
             for (var i = 0; i < numberCycles; i++)
             {
-                initData = tuner.Tune(evaluationFunction, 5, initData);
+                initData = tuner.Tune(evaluationFunction, testSet, 1, initData);
                 ResultLogger.LogResult(initData, "result_tune_random.txt");
             }
         }
 
         [Test]
-        [Explicit("TuneRace")]
+        [Explicit("TuneGreedyRace")]
         public void TuneGreedyRace()
         {
             var tuner = new TunerDepthGreedyRacer();
             var evaluationFunction = new EndRaceEvaluationFunction();
-            var result = tuner.Tune(evaluationFunction, 1);
+            var result = tuner.Tune(evaluationFunction, testSet, 1);
             ResultLogger.LogResult(result, "result_tune_greedy.txt");
         }
 
@@ -86,7 +90,8 @@ namespace AiAlgorithms.racing
                         return state;
                     }
                 }
-            }, new List<(int, bool)> { (0, true), (1, true), (2, true), (0, false), (1, false), (2, false) }, evaluationFunction, trialsCount);
+            },
+            testSet, evaluationFunction, trialsCount);
 
             ResultLogger.LogResult(result, "result_compare.txt");
         }
@@ -120,8 +125,7 @@ namespace AiAlgorithms.racing
                     }
                 }
             },
-            new List<(int, bool)> { (0, true), (1, true), (2, true), (0, false), (1, false), (2, false) },
-            evaluationFunction, trialsCount, initData);
+            testSet, evaluationFunction, trialsCount, initData);
 
             ResultLogger.LogResult(result, "result_compare_gready.txt");
         }
