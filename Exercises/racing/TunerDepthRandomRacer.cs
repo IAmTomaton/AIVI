@@ -13,25 +13,32 @@ namespace AiAlgorithms.racing
         {
             var solutions = new Dictionary<string, Func<(int, bool), RaceState>>();
 
-            for (var maxDepth = 5; maxDepth <= 15; maxDepth++)
+            for (var maxDepth = 7; maxDepth <= 12; maxDepth++)
             {
-                for (var depthDivider = 2; depthDivider <= 5; depthDivider++)
+                for (var minDepth = 3; minDepth <= 7; minDepth++)
                 {
-                    for (var minDepth = 2; minDepth <= 10; minDepth++)
+                    for (var depthDivider = 2; depthDivider <= 5; depthDivider++)
                     {
+                        var name = $"maxDepth:{maxDepth} depthDivider:{depthDivider} minDepth:{minDepth}";
+
                         if (maxDepth < minDepth)
+                            continue;
+
+                        if (initialData.Other.TryGetValue(name, out var stat) && double.IsNegativeInfinity(stat.Mean))
                             continue;
 
                         var tempMaxDepth = maxDepth;
                         var tempDepthDivider = depthDivider;
                         var tempMinDepth = minDepth;
-                        solutions.Add($"maxDepth:{maxDepth} depthDivider:{depthDivider} minDepth:{minDepth}", i =>
+                        solutions.Add(name, i =>
                         {
                             var racer = new RandomRacer(tempMaxDepth, tempDepthDivider, tempMinDepth);
                             var test = RaceProblemsRepo.GetTests(i.Item2).ElementAt(i.Item1);
                             var state = RaceController.Play(test, racer, false);
                             return state;
                         });
+                        if (maxDepth == minDepth)
+                            break;
                     }
                 }
             }

@@ -35,8 +35,8 @@ namespace AiAlgorithms.racing
         {
             var tuner = new TunerDepthRandomRacer();
             var evaluationFunction = new EndRaceEvaluationFunction();
-            var numberCycles = 100;
-            ComparisonResult initData = null;
+            var numberCycles = 1;
+            ComparisonResult initData = ResultLogger.ReadResult("result_tune_random.txt");
             for (var i = 0; i < numberCycles; i++)
             {
                 initData = tuner.Tune(evaluationFunction, testSet, 1, initData);
