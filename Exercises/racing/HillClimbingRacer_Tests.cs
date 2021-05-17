@@ -22,8 +22,9 @@ namespace AiAlgorithms.racing
         public void VisualizeRace()
         {
             // Открой файл bin/Debug/*/racing/visualizer/index.html чтобы посмотреть реплей на тесте testIndex
-            var racer = new HillClimbingRacer();
-            var test = RaceProblemsRepo.GetTests(true).ElementAt(0);
+            var racer = new HillClimbingRacer(new RandomRacer(7));
+            // var racer = new HillClimbingRandomRacer();
+            var test = RaceProblemsRepo.GetTests(false).ElementAt(0);
             RaceController.Play(test, racer, true);
         }
 
@@ -36,7 +37,7 @@ namespace AiAlgorithms.racing
             var test = RaceProblemsRepo.GetTests(false).ElementAt(testIndex);
             var state = new RaceState(test.Track, Car.ParseCar(car));
             Console.WriteLine(state);
-            var racer = new HillClimbingRacer();
+            var racer = new HillClimbingRacer(new HillClimbingRandomRacer());
             var solutions = racer.GetSolutions(state, 100).ToList();
             foreach (var solution in solutions)
             {
@@ -46,7 +47,7 @@ namespace AiAlgorithms.racing
 
         public double CalculateScore()
         { 
-            return RacingEvaluator.GetTotalScore(new HillClimbingRacer(), 100, true, RaceProblemsRepo.GetTests(true).Take(2));
+            return RacingEvaluator.GetTotalScore(new HillClimbingRacer(new HillClimbingRandomRacer()), 100, true, RaceProblemsRepo.GetTests(true).Take(2));
         }
     }
 }
