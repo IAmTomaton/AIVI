@@ -1,20 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AiAlgorithms.Algorithms;
 
 namespace AiAlgorithms.racing
 {
-    public class RandomRacer : ISolver<RaceState, RaceSolution>
+    public class RRClone : ISolver<RaceState, RaceSolution>
     {
         private V[] directions = new V[9];
         private Random random = new Random();
-        private int maxDepth = 10;
-        private int depthDivider = 4;
-        private int minDepth = 5;
-        private int constantDepth = -1;
 
-        public RandomRacer()
+        public RRClone()
         {
             var index = 0;
             for (var dx = -1; dx < 2; dx++)
@@ -27,25 +23,11 @@ namespace AiAlgorithms.racing
             }
         }
 
-        public RandomRacer(int maxDepth, int depthDivider, int minDepth) : this()
-        {
-            this.maxDepth = maxDepth;
-            this.depthDivider = depthDivider;
-            this.minDepth = minDepth;
-        }
-
-        public RandomRacer(int depth) : this()
-        {
-            constantDepth = depth;
-        }
-
         public IEnumerable<RaceSolution> GetSolutions(RaceState problem, Countdown countdown)
         {
             var car = problem.Car;
-            var distanceToFlag = problem.GetFlagFor(car).DistTo(car.Pos);
-            var depth = constantDepth;
-            if (depth == -1)
-                depth = Math.Min(maxDepth, Math.Max((int)distanceToFlag / depthDivider, minDepth));
+            var maxV = Math.Max(car.V.X, car.V.Y);
+            var depth = Math.Min(Math.Max(maxV, 7), 9);
 
             V[] bestPath = null;
             var value = double.NegativeInfinity;
@@ -56,11 +38,9 @@ namespace AiAlgorithms.racing
                 var newValue = Simulation(problem.MakeCopy(), path);
                 if (value < newValue)
                 {
-                    var solution = new RaceSolution(path);
+                    yield return new RaceSolution(path);
                     value = newValue;
-                    solution.Score = newValue;
                     bestPath = path;
-                    yield return solution;
                 }
             }
 
