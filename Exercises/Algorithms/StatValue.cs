@@ -103,5 +103,15 @@ namespace AiAlgorithms.Algorithms
             return $"{Math.Round(Mean, 2)}\t{Math.Round(Mean - ConfIntervalSize, 2)}\t{Math.Round(Mean + ConfIntervalSize, 2)}\t{Math.Round(StdDeviation, 2)}" +
                 $"\t{Math.Round(ConfIntervalSize, 2)}\t{Count}\t{Math.Round(Min, 2)}\t{Math.Round(Max, 2)}\t{Sum}\t{Sum2}";
         }
+
+        public static StatValue Deserialization(string[] numbers)
+        {
+            var count = long.Parse(numbers[5]);
+            var min = double.Parse(numbers[6]);
+            var max = double.Parse(numbers[7]);
+            var sum = double.Parse(numbers[8]);
+            var sum2 = double.Parse(numbers[9]);
+            return new StatValue(count, sum, sum2, min, max);
+        }
     }
 }

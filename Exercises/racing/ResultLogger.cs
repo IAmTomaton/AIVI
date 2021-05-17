@@ -16,13 +16,13 @@ namespace AiAlgorithms.racing
             output.AppendLine($"{result.BestSolverName}\t{result.BestSolverStatistics.Serialization()}");
 
             output.AppendLine($"Adjacent {result.Adjacent.Count}");
-            foreach (var solution in result.Adjacent.OrderBy(stat => -stat.Value.Mean))
+            foreach (var solution in result.Adjacent.OrderBy(stat => -stat.Value.ScoreStat.Mean))
             {
                 output.AppendLine($"{solution.Key}\t{solution.Value.Serialization()}");
             }
 
             output.AppendLine($"Other {result.Other.Count}");
-            foreach (var solution in result.Other.OrderBy(stat => -stat.Value.Mean))
+            foreach (var solution in result.Other.OrderBy(stat => -stat.Value.ScoreStat.Mean))
             {
                 output.AppendLine($"{solution.Key}\t{solution.Value.Serialization()}");
             }
@@ -35,10 +35,11 @@ namespace AiAlgorithms.racing
 
         public static ComparisonResult ReadResult(string fileName)
         {
+            if (!File.Exists(fileName)) return null;
             using (var sr = new StreamReader($"{fileName}"))
             {
                 sr.ReadLine();
-                (string nameBest, StatValue statValueBest) = StatValueFromLine(sr.ReadLine());
+                (string nameBest, SolverStat statValueBest) = StatValueFromLine(sr.ReadLine());
 
                 var adjacentCount = int.Parse(sr.ReadLine().Split(' ')[1]);
                 var adjacent = Enumerable.Range(0, adjacentCount)
@@ -60,16 +61,11 @@ namespace AiAlgorithms.racing
             }
         }
 
-        private static (string name, StatValue statValue) StatValueFromLine(string line)
+        private static (string name, SolverStat statValue) StatValueFromLine(string line)
         {
             var arr = line.Split('\t');
             var name = arr[0];
-            var count = long.Parse(arr[6]);
-            var min = double.Parse(arr[7]);
-            var max = double.Parse(arr[8]);
-            var sum = double.Parse(arr[9]);
-            var sum2 = double.Parse(arr[10]);
-            return (name, new StatValue(count, sum, sum2, min, max));
+            return (name, SolverStat.Deserialization(arr.Skip(1).ToArray()));
         }
     }
 }

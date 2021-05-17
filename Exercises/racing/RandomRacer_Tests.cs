@@ -18,14 +18,10 @@ namespace AiAlgorithms.racing
         public void VisualizeRace()
         {
             //var racer = new GreedyRacer(9, 5, 5);
-            var numberCycles = 50;
-            for (var i = 0; i < numberCycles; i++)
-            {
-                var racer = new RandomRacer(10, 4, 5);
-                var test = RaceProblemsRepo.GetTests(true).ElementAt(0);
-                if (!RaceController.Play(test, racer, true).Car.IsAlive)
-                    break;
-            }
+            var racer = new RandomRacer(10, 4, 5);
+            //var racer = new RandomRacer(7, 5, 6);
+            var test = RaceProblemsRepo.GetTests(true).ElementAt(0);
+            RaceController.Play(test, racer, true);
             Console.WriteLine(Path.Combine(TestContext.CurrentContext.TestDirectory, "racing", "visualizer", "index.html"));
         }
 

@@ -9,11 +9,11 @@ namespace AiAlgorithms.racing
     class ComparisonResult
     {
         public string BestSolverName;
-        public StatValue BestSolverStatistics;
-        public Dictionary<string, StatValue> Adjacent;
-        public Dictionary<string, StatValue> Other;
+        public SolverStat BestSolverStatistics;
+        public Dictionary<string, SolverStat> Adjacent;
+        public Dictionary<string, SolverStat> Other;
 
-        public Dictionary<string, StatValue> InBunch()
+        public Dictionary<string, SolverStat> InBunch()
         {
             var allStat = Adjacent.Concat(Other).ToDictionary(x => x.Key, x => x.Value);
             allStat.Add(BestSolverName, BestSolverStatistics);

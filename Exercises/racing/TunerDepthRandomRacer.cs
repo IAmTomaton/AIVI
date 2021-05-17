@@ -13,18 +13,15 @@ namespace AiAlgorithms.racing
         {
             var solutions = new Dictionary<string, Func<(int, bool), RaceState>>();
 
-            for (var maxDepth = 7; maxDepth <= 12; maxDepth++)
+            for (var maxDepth = 9; maxDepth <= 9; maxDepth++)
             {
-                for (var minDepth = 3; minDepth <= 7; minDepth++)
+                for (var minDepth = 7; minDepth <= 7; minDepth++)
                 {
-                    for (var depthDivider = 2; depthDivider <= 5; depthDivider++)
+                    for (var depthDivider = 5; depthDivider <= 5; depthDivider++)
                     {
                         var name = $"maxDepth:{maxDepth} depthDivider:{depthDivider} minDepth:{minDepth}";
 
                         if (maxDepth < minDepth)
-                            continue;
-
-                        if (initialData.Other.TryGetValue(name, out var stat) && double.IsNegativeInfinity(stat.Mean))
                             continue;
 
                         var tempMaxDepth = maxDepth;
@@ -43,7 +40,7 @@ namespace AiAlgorithms.racing
                 }
             }
 
-            var result = Comparator.Compare(solutions, testSet, evaluationFunction, trialsCount, initialData);
+            var result = Comparator.Compare(solutions, testSet, evaluationFunction, trialsCount, initialData, true);
 
             return result;
         }
